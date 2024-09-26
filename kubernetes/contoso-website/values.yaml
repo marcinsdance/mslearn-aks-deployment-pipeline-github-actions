@@ -1,0 +1,7 @@
+image:
+  registry: <ACR-NAME>
+  name: contoso-website
+  tag: latest
+
+dns:
+  name: 2872796d268f497d81d0.eastus.aksapp.io
