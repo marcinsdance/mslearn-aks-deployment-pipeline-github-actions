@@ -30,10 +30,10 @@ name: Build and push the latest build to staging
 
       deploy:
         runs-on: ubuntu-20.04
-        needs: build_push_image # Will wait for the execution of the previous job
+        needs: build_push_image # Waits for the execution of the previous job
         permissions:
-          id-token: write # This is required for requesting the JWT
-          contents: read  # This is required for actions/checkout
+          id-token: write # Required for requesting the JWT
+          contents: read  # Required for actions/checkout
 
         steps:
           - uses: actions/checkout@v2
@@ -55,3 +55,16 @@ name: Build and push the latest build to staging
             with:
               resource-group: ${{ secrets.RESOURCE_GROUP }}
               cluster-name: ${{ secrets.CLUSTER_NAME }}
+
+          - name: Run Helm Deploy
+            run: |
+              helm upgrade \
+                --install \
+                --create-namespace \
+                --atomic \
+                --wait \
+                --namespace staging \
+                contoso-website \
+                ./kubernetes/contoso-website \
+                --set image.repository=${{ secrets.ACR_NAME }} \
+                --set dns.name=${{ secrets.DNS_NAME }}
